@@ -1,0 +1,49 @@
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: users-svc  
+spec:
+  minReadySeconds: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users-svc
+  template:
+    metadata:
+      labels: 
+        app: users-svc
+      name: users-svc
+    spec:
+      containers: 
+        - name: users-svc
+          image: shaikkhajaibrahim/libbookssvc:1.0
+          env: 
+            - name: DATABASE_URL
+              value: "postgresql://user:password@users-db:5432/usersdb"    
+            - name: SECRET_KEY
+              value: 'YtDEVWnL35aAIP-5yxeLjAZ49R920-mMNDfwPyWULu63HFsYzo0f-LO2InxC8eu428k'  
+          resources:
+            requests:
+              memory: 24M
+              cpu: 100m
+            limits:
+              memory: 128M
+              cpu: 500m
+          ports: 
+            - containerPort: 8000
+              protocol: TCP      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: users-svc
+  name: users    
+spec:
+  selector:
+    app: users-svc
+  type: ClusterIP
+  ports: 
+    - port: 8000
+      targetPort: 8000  
