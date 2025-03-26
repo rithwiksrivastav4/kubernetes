@@ -12,7 +12,7 @@ spec:
     matchLabels:
       app: webstore
   strategy:
-    type: RollingUpdate
+    type: RollingUpdate # rolling updates
     rollingUpdate:
       maxSurge: 25%
       maxUnavailable: 25%
@@ -27,22 +27,7 @@ spec:
           image: shaikkhajaibrahim/libwebstore:1.0
           envFrom:
             - configMapRef:
-                name: library-config
-          livenessProbe:
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            successThreshold: 1
-            failureThreshold: 3
-          readinessProbe:
-            failureThreshold: 3
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            successThreshold: 1
-          startupProbe:
-            initialDelaySeconds: 10 
-            failureThreshold: 3
-            periodSeconds: 5
-            successThreshold: 1
+                name: library-config # environmental varibales coming from configmap
           ports:
             - containerPort: 3000
               protocol: TCP
@@ -59,7 +44,7 @@ kind: Service
 metadata:
   name: librarystore-svc
 spec:
-  type: NodePort
+  type: NodePort  # nodeport is used in selfhosted kubernetes, if we use managed kubernetes we use loadbalancer
   selector:
     app: webstore
   ports:

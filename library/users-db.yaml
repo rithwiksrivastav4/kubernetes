@@ -32,22 +32,7 @@ spec:
               protocol: TCP
           envFrom:
             - configMapRef:
-                name: users-db-config
-          livenessProbe:
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            successThreshold: 1
-            failureThreshold: 3
-          readinessProbe:
-            failureThreshold: 3
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            successThreshold: 1
-          startupProbe:
-            initialDelaySeconds: 10 
-            failureThreshold: 3
-            periodSeconds: 5
-            successThreshold: 1      
+                name: users-db-config   
           resources: 
             requests:
               memory: 24M

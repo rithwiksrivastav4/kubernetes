@@ -34,20 +34,30 @@ spec:
             - configMapRef:
                 name: books-svc-config
           livenessProbe:
-            initialDelaySeconds: 10
-            periodSeconds: 5
+            initialDelaySeconds: 3
+            periodSeconds: 10
             successThreshold: 1
             failureThreshold: 3
+            tcpSocket:
+              port: 8000
           readinessProbe:
-            failureThreshold: 3
-            initialDelaySeconds: 10
-            periodSeconds: 5
+            initialDelaySeconds: 5
+            periodSeconds: 10
             successThreshold: 1
-          startupProbe:
-            initialDelaySeconds: 10 
             failureThreshold: 3
-            periodSeconds: 5
-            successThreshold: 1      
+            httpGet:
+              path: /docs
+              port: 8000
+          startupProbe:
+            initialDelaySeconds: 2
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - ps aux | grep uvicorn  
           resources: 
             requests:
               memory: 24M
