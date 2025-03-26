@@ -1,0 +1,72 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: books-svc
+  labels:
+    app: book-svc
+  annotations:
+    kubernetes.io/change-cause: "version v1.0"      
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-svc
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: book-svc
+    spec:
+      containers:
+        - name: books-svc
+          image: shaikkhajaibrahim/libbookssvc:1.0
+          ports:
+            - containerPort: 8000
+              name: books-svc
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: books-svc-config
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+          startupProbe:
+            initialDelaySeconds: 10 
+            failureThreshold: 3
+            periodSeconds: 5
+            successThreshold: 1      
+          resources: 
+            requests:
+              memory: 24M
+              cpu: 100m
+            limits:
+              memory: 128M
+              cpu: 500m 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    db: books  
+  name: books-svc 
+spec:                       
+  selector:
+    db: books
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP  

@@ -1,0 +1,72 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: users-svc
+  labels:
+    app: user-svc
+  annotations:
+    kubernetes.io/change-cause: "version v1.0"      
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-svc
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: user-svc
+    spec:
+      containers:
+        - name: users-svc
+          image: shaikkhajaibrahim/libbookssvc:1.0
+          ports:
+            - containerPort: 8000
+              name: users-svc
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: users-svc-config
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+          startupProbe:
+            initialDelaySeconds: 10 
+            failureThreshold: 3
+            periodSeconds: 5
+            successThreshold: 1      
+          resources: 
+            requests:
+              memory: 24M
+              cpu: 100m
+            limits:
+              memory: 128M
+              cpu: 500m 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    db: users  
+  name: users-svc 
+spec:                       
+  selector:
+    db: users
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP  

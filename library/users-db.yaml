@@ -1,0 +1,72 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: users-db
+  labels:
+    app: user-db
+  annotations:
+    kubernetes.io/change-cause: "version v1.0"      
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-db
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: user-db
+    spec:
+      containers:
+        - name: users-db
+          image: postgres:15-alpine
+          ports:
+            - containerPort: 5432
+              name: users-db
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: users-db-config
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+          startupProbe:
+            initialDelaySeconds: 10 
+            failureThreshold: 3
+            periodSeconds: 5
+            successThreshold: 1      
+          resources: 
+            requests:
+              memory: 24M
+              cpu: 100m
+            limits:
+              memory: 128M
+              cpu: 500m 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    db: users  
+  name: users-db  
+spec:                       
+  selector:
+    db: users
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP  

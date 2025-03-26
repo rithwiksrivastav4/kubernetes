@@ -1,0 +1,72 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: books-db
+  labels:
+    app: book-db
+  annotations:
+    kubernetes.io/change-cause: "version v1.0"      
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-db
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: book-db
+    spec:
+      containers:
+        - name: books-db
+          image: postgres:15-alpine
+          ports:
+            - containerPort: 5432
+              name: books-db
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: books-db-config
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            successThreshold: 1
+          startupProbe:
+            initialDelaySeconds: 10 
+            failureThreshold: 3
+            periodSeconds: 5
+            successThreshold: 1      
+          resources: 
+            requests:
+              memory: 24M
+              cpu: 100m
+            limits:
+              memory: 128M
+              cpu: 500m 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    db: books  
+  name: books-db  
+spec:                       
+  selector:
+    db: books
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP  
