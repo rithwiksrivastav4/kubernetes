@@ -60,11 +60,11 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    db: books  
+    app: book-db
   name: books-db  
 spec:                       
   selector:
-    db: books
+    app: book-db
   type: ClusterIP
   ports:
     - port: 8000
