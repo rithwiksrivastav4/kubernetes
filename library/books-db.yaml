@@ -31,8 +31,8 @@ spec:
               name: books-db
               protocol: TCP
           envFrom:
-            - configMapRef:
-                name: books-db-config   
+            - secretRef:
+                name: books-db-secrets   
           resources: 
             requests:
               memory: 24M

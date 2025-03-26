@@ -26,8 +26,8 @@ spec:
         - name: lib-webstore
           image: shaikkhajaibrahim/libwebstore:1.0
           envFrom:
-            - configMapRef:
-                name: library-config # environmental varibales coming from configmap
+            - secretRef:
+                name: library-webstore # environmental varibales coming from secrets
           ports:
             - containerPort: 3000
               protocol: TCP

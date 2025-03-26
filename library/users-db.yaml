@@ -31,8 +31,8 @@ spec:
               name: users-db
               protocol: TCP
           envFrom:
-            - configMapRef:
-                name: users-db-config   
+            - secretRef:
+                name: users-db-secrets   
           resources: 
             requests:
               memory: 24M
