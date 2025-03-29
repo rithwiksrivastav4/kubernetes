@@ -1,0 +1,12 @@
+# alpine-ping.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: alpine-ping
+  namespace: default
+spec:
+  containers:
+  - name: alpine
+    image: alpine:latest
+    command: ["/bin/sh", "-c"]
+    args: ["apk add --no-cache iputils && sleep infinity"]
