@@ -2,29 +2,29 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: mysql
-  lables: 
-    name: mysql
+  name: mangodb
+  labels: 
+    name: mangodb
 spec:
   containers:
-    - name: mysql
-      image: mysql:9
+    - name: mangodb
+      image: mongo:6-jammy
       resources:
         requests:
           memory: "128Mi"
           cpu: "250m"
         limits:
-          memory: "512Mi"
-          cpu: "1000m"
+          memory: "1000Mi"
+          cpu: "1500m"
       ports:
-        - containerPort: 3306
+        - containerPort: 27017
       envFrom:
         - configMapRef:
-            name: mysql-pod
+            name: mangodb-pod
       volumeMounts:
         - name: libdb
-          mountPath: var/lib/mysql      
+          mountPath: /data/db  /data/configdb    
   volumes:
     - name: libdb
       persistentVolumeClaim:
-        claimName: mysql-pvc          
+        claimName: mangodb          
