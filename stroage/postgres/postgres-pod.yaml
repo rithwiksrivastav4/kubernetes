@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres
+  labels: 
+    name: postgres
+spec:
+  containers:
+    - name: postgres
+      image: postgres:17
+      resources:
+        requests:
+          memory: "128Mi"
+          cpu: "250m"
+        limits:
+          memory: "512Mi"
+          cpu: "1000m"
+      ports:
+        - containerPort: 5432
+      envFrom:
+        - configMapRef:
+            name: postgres-pod
+      volumeMounts:
+        - name: libdb
+          mountPath: /var/lib/postgresql/data      
+  volumes:
+    - name: libdb
+      persistentVolumeClaim:
+        claimName: postgres-pvc          

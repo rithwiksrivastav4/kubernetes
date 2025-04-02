@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-pod
+data:
+  POSTGRES_USER: rootroot  
+  POSTGRES_PASSWORD: ltdevops
+  POSTGRES_DB: postgres
+  
