@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-pod
+data:
+  MYSQL_ROOT_PASSWORD: rootroot  
+  MYSQL_DATABASE: library
+  MYSQL_USER: ltdevops
+  MYSQL_PASSWORD: ltdevops
+  
