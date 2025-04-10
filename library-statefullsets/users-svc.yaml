@@ -2,9 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
-  name: books-svc
+  name: users-svc
   labels:
-    app: book-svc
+    app: user-svc
   annotations:
     kubernetes.io/change-cause: "version v1.0"      
 spec:
@@ -12,7 +12,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: book-svc
+      app: user-svc
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -21,28 +21,18 @@ spec:
   template:
     metadata:
       labels:
-        app: book-svc
+        app: user-svc
     spec:
       containers:
-        - name: books-svc
+        - name: users-svc
           image: shaikkhajaibrahim/libbookssvc:1.0
           ports:
             - containerPort: 8000
-              name: books-svc
+              name: users-svc
               protocol: TCP
           envFrom:
             - secretRef:
-                name: books-svc-secrets
-          startupProbe:
-            initialDelaySeconds: 2
-            periodSeconds: 10
-            successThreshold: 1
-            failureThreshold: 3
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - ps aux | grep uvicorn  
+                name: users-svc-secrets    
           resources: 
             requests:
               memory: 24M
@@ -55,13 +45,13 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: book-svc  
-  name: books-svc 
+    app: user-svc  
+  name: users-svc 
 spec:                       
   selector:
-    app: book-svc
+    app: user-svc
   type: ClusterIP
   ports:
-    - port: 8000
-      targetPort: 8000
+    - port: 5432
+      targetPort: 5432
       protocol: TCP  
