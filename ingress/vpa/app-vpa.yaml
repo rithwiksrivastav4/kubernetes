@@ -1,0 +1,22 @@
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: app-vpa
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: app-deploy
+  updatePolicy:
+    updateMode: "off" # or "Recreate", "Initial", "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: web-store
+      minAllowed:
+        cpu: 1
+        memory: 100Mi
+      maxAllowed:
+        cpu: 2
+        memory: 1Gi
+      controlledResources: ["cpu", "memory"]
