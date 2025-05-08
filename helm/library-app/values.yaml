@@ -1,0 +1,88 @@
+metadata:
+  name: app-deploy
+  labels:
+    app: web
+  annotations:
+    kubernetes.io/change-cause: "version v1.0"
+spec:
+  template:
+      name: web-store
+      labels:
+        app: web
+      annotations:
+        app.kubernetes.io/created-by: "controller-manager"
+image:
+  name: shaikkhajaibrahim/dmtest
+  tag: "1.0"
+resources:
+  requests:
+    memory: "24mi"
+    cpu: "50m"
+  limits:
+    memory: "100mi"
+    cpu: "200mi"
+    
+appsvc:
+  metadata:
+      labels:
+        app: web
+      name: app-svc
+  selector:
+    app: web
+
+preschool:
+  metadata:
+    name: preschool-deploy
+  replicas: "2" 
+  matchLabels:
+    app: preschool
+  image:
+    name: shaikkhajaibrahim/preschool
+    tag: "1.1"
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "128Mi"
+      cpu: "500m"
+    ports:
+      - containerPort: "80"
+presvc:
+  metadata:
+    name: preschool-svc
+  selector:
+    app: preschool
+  ports:
+    - port: "80"
+      targetPort: "80"
+
+skate:
+  metadata:
+    name: skate-deploy
+  replicas: "2" 
+  matchLabels:
+    app: skate
+  labels:
+    app: skate
+  image:
+    name: shaikkhajaibrahim/skateboard
+    tag: "1.0"
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "128Mi"
+      cpu: "500m"
+  port:
+    containerport: "80"
+skatesvc:
+  metadata:
+    name: skate-svc
+  selector:
+    app: skate
+  port:
+    port: "80"
+    targetPort: "80"      
+    

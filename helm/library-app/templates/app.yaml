@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+{{ toYaml .Values.metadata | indent 2 }}
+spec:
+  minReadySeconds: 5
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata: {{ toYaml .Values.spec.template | nindent 6 }}
+    spec:
+      containers:
+        - name: web-store
+          image: {{ .Values.image.name }}:{{ .Values.image.tag }}
+          resources: {{ .Values.resources | toYaml | nindent 12 }}
+             
+---
+apiVersion: v1
+kind: Service
+metadata:
+{{ .Values.appsvc.metadata | toYaml | indent 2 }}
+spec: 
+  selector:
+  {{ .Values.appsvc.selector | toYaml | indent 2 }}
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP

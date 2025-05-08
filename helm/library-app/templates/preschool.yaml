@@ -1,0 +1,29 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+{{ .Values.preschool.metadata | toYaml | indent 2 }}
+spec:
+  replicas: {{ .Values.preschool.replicas }}
+  selector:
+    matchLabels: {{ .Values.preschool.matchLabels | toYaml | nindent 6  }}
+  template:
+    metadata:
+      labels:
+        app: preschool
+    spec:
+      containers:
+      - name: preschool
+        image: {{ .Values.preschool.image.name }}:{{ .Values.preschool.image.tag }}
+        resources: {{ .Values.preschool.resources | toYaml | nindent 4 }}
+         
+---
+apiVersion: v1
+kind: Service
+metadata:
+{{ .Values.presvc.metadata | toYaml | indent 2 }}
+spec:
+  selector:
+  {{ .Values.presvc.selector | toYaml | indent 2 }}
+  ports:
+  {{ .Values.presvc.ports | toYaml | indent 2 }}

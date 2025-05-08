@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+{{ .Values.skate.metadata | toYaml | indent 2 }}
+spec:
+  replicas: {{ .Values.skate.replicas }}
+  selector: 
+    matchLabels: {{ .Values.skate.matchLabels | toYaml | nindent 6}}
+  template:
+    metadata:
+      labels: {{ .Values.skate.labels | toYaml | nindent 8 }}
+    spec:
+      containers:
+      - name: skate
+        image: {{ .Values.skate.image.name }}:{{ .Values.skate.image.tag }}
+        resources: {{ .Values.skate.resources | toYaml | nindent 10 }}
+        ports:
+        - containerPort: {{ .Values.skate.port.containerport }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+{{ .Values.skatesvc.metadata | toYaml | indent 2}}
+spec:
+  selector:
+  {{ .Values.skatesvc.selector | toYaml | indent 2 }}
+  ports:
+    - port: {{ .Values.skatesvc.port.port }}
+      targetPort: {{ .Values.skatesvc.port.targetPort }}
